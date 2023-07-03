@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+
+
+{% load humanize %}
+
+ 
+
+
+
+
+      <div id="page-content-wrapper">
+
+    
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4 ">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
+                <h2 class="fs-2 m-0">Transaction history</h2>
+
+             
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            {% include 'setting.html' %}
+
+        
+
+        </nav>
+
+
+
+    
+
+   
+
+    <main class="maindashboard">
+
+
+ 
+
+      <form method="get" id="filter">
+        <div class="d-flex justify-content-center mt-5">
+            <div class="input-group w-50">
+                <input type="search" name="daterange" id="search" placeholder="Filter using date range" class="form-control rounded-start" autocomplete="off" value="{{ request.GET.daterange}}" />
+                <button type="submit" class="btn btn-outline-secondary rounded-end">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.657 10.743a6.5 6.5 0 10-1.414 1.414l3.536 3.536a1 1 0 001.414-1.414l-3.536-3.536zM6.5 11a4.5 4.5 0 110-9 4.5 4.5 0 010 9z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        {% if form.daterange.errors %} {% for error in form.daterange.errors %}
+        <p class="text-danger text-sm italic">{{ error }}</p>
+        {% endfor %} {% endif %}
+    </form>
+    {% if object_list|length == 0 %}
+
+
+    {% include 'payments/NotFound.html' %}
+
+   
+    {% else %}
+    <table class="table-auto mx-auto w-full mt-8 border-collapse">
+        <thead class="bg-gray-800 text-black">
+            <tr class="uppercase font-semibold text-sm">
+                <th class=" border border-black px-4 py-2">Reference</th>
+                <th class=" border border-black px-4 py-2">Amount</th>
+                <th class=" border border-black px-4 py-2">Type</th>
+                {% if request.user == transaction.receiver %}
+                <th class=" border border-black px-4 py-2">Sender</th>
+                {% else %}
+                <th class=" border border-black px-4 py-2">Receiver</th>
+                {% endif %}
+                <th class=" border border-black px-4 py-2">Description</th>
+                <th class=" border border-black px-4 py-2">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in object_list %}
+            <tr class="{% cycle 'bg-gray-300' 'bg-white-100' %}">
+                <td class=" border border-black px-4 py-2">{{ transaction.reference }}</td>
+                
+                {% if transaction.receiver == user %}
+                <td class="border border-blue-900 px-4 py-2 text-right">{{request.user.default_currency}}{{ transaction.receiver_amount|floatformat:2|intcomma }}</td>
+                    <td class="border border-blue-900 px-4 py-2">CR</td>
+                {% else %}
+                <td class="border border-blue-900 px-4 py-2 text-right">{{request.user.default_currency}}{{ transaction.sender_amount|floatformat:2|intcomma }}</td>
+                    <td class="border border-blue-900 px-4 py-2">DR</td>
+                {% endif %}
+                {% if user == transaction.receiver %}
+                    <td class=" border border-black px-4 py-2">{{ transaction.sender.email }}</td>
+                {% else %}
+                    <td class=" border border-black px-4 py-2">{{ transaction.receiver.email }}</td>
+                {% endif %}
+                <td class=" border border-black px-4 py-2">{{ transaction.description }}</td>
+                <td class="border border-blue-900 px-4 py-2">{{ transaction.created_at|date:"F d, Y h:i A" }}</td>
+                
+            </tr>
+            {% endfor %}
+            <!-- <tr class="bg-gray-600 text-white">
+                <th class="border border-blue-900 px-4 py-2 text-right" colspan="3">Current Balance</th>
+                <th class="border border-blue-900 px-4 py-2 text-right">$ {{ account.balance|floatformat:2|intcomma }}</th>
+            </tr> -->
+        </tbody>
+    </table>
+{% endif %}
+
+</div>
+{% endblock %} {% block footer_extra %}
+<script type="text/javascript">
+    var def_date = '{{request.GET.daterange}}'
+    def_date = def_date == "" ? moment().format("Y-MM-DD") + " - " + moment().format("Y-MM-DD") : def_date
+    var date_split = def_date.split(" - ")
+    var start_date = moment(date_split[0]).format("MM/DD/Y")
+    var end_date = moment(date_split[1]).format("MM/DD/Y")
+    console.log(start_date, end_date)
+    $(function() {
+        $('input[name="daterange"]').daterangepicker({
+            autoUpdateInput: false,
+            startDate: start_date,
+            endDate: end_date,
+            locale: {
+                cancelLabel: "Clear",
+            },
+        });
+
+        $('input[name="daterange"]').on("apply.daterangepicker", function(ev, picker) {
+            $(this).val(picker.startDate.format("YYYY-MM-DD") + " - " + picker.endDate.format("YYYY-MM-DD"));
+            $('#filter').submit()
+        });
+
+        $('input[name="daterange"]').on("cancel.daterangepicker", function(ev, picker) {
+            $(this).val("");
+            $('#filter').submit()
+        });
+    });
+</script>
+{% endblock %}

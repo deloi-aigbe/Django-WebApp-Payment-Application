@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+
+{% if form.non_field_errors %}
+{% for error in form.non_field_errors %}
+<div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+    <strong>Error!</strong> {{ error }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+
+
+
+
+      <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4 ">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
+                <h2 class="fs-2 m-0">Fund Request</h2>
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            {% include 'setting.html' %}
+
+        </nav>
+
+
+
+    
+
+   
+
+    <main class="maindashboard">
+
+        <div class="container">
+            <form method="post">
+              {% csrf_token %}
+              <div class="mb-3">
+                  <label for="receiver_email" class="form-label">Receiver Email</label>
+                  <input type="email" class="form-control" id="receiver_email" name="receiver_email" placeholder="johndoe@email.com" required>
+              </div>
+              <div class="mb-3">
+                  <label for="amount" class="form-label">Amount  in {{request.user.default_currency}}</label>
+                  <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter amount" required>
+              </div>
+              <div class="mb-3">
+                  <label for="description" class="form-label">Message</label>
+                  <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter a message"></textarea>
+              </div>
+
+              <input type="hidden" id="sender_email" name="sender_email" value="{{request.user.email}}">
+              <button type="submit" class="btn btn-primary">Send</button>
+          </form>
+          
+          </div>
+
+
+     
+        </main>
+    
+      </div>
+
+</body>
+
+</html>{% endblock content %}
+

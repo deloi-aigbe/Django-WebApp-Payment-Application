@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+{% load humanize %}
+
+
+<div>
+
+    <h1> money_requests_received</h1>
+    {% for MoneyRequest in object_list %}
+
+
+    
+   <h1>
+    {{MoneyRequest}}
+
+    {{MoneyRequest.status}}
+    {{MoneyRequest.sender_email}}
+    {{MoneyRequest.receiver_email }}
+
+
+    
+
+
+    
+
+   </h1>
+
+    {% endfor %}
+
+</div>
+    
+
+{% endblock content %}

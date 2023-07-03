@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+{% load humanize %}
+
+
+    <div id="page-content-wrapper">
+
+    
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4 ">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
+                <h2 class="fs-2 m-0">Requests for Payment</h2>
+
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            {% include 'setting.html' %}
+        </nav>
+
+
+        <form method="POST" class="maindashboard">
+          {% csrf_token %}
+
+        <div class="">
+          {% if object_list|length == 0 %}
+          {% include 'payments/NotFound.html' %}
+          {% else %}
+    
+    
+        <div class="table-responsive mt-4">
+    
+          <table class="table table-striped">
+    
+            <thead class="bg-sideColor text-white">
+              <tr class="uppercase font-semibold text-sm">
+                  <th  class="px-2 py-2">Sender Name</th>
+                  <th class="px-2 py-2">Amount </th>
+                  <th class="px-4 py-2">Status</th>
+                  <th class="px-4 py-2">Description</th>
+                  <th class="px-2 py-2">Date</th>
+                  <th  class="px-2 py-2">Action</th>
+                </tr>
+          
+          </thead>
+    
+          <tbody>
+    
+       
+            {% for request in object_list %}
+        
+    
+                    <tr class="{% cycle 'bg-gray-300' 'bg-white-100' %}">
+    
+                    <td  class="px-2 py-2">{{ request.sender }}</td>
+                    <td  class="px-2 py-2">{{request.receiver.default_currency}} {{ request.receiver_amount }}</td>
+                    <td class="px-2 py-2">{{ request.status }}</td>
+      
+                    <td class="px-2 py-2">{{ request.description }}</td>
+                    <td class="px-2 py-2">{{ request.created_at }}</td>
+      
+                    <td class="px-2 py-2">
+
+                
+
+                      {% if request.status != "pending" %}
+
+                    
+                      {% else %}
+
+                      <button type="submit" class="btn btn-success" name="accept" value="{{ request.id }}">Accept</button>
+                      <button type="submit" class="btn btn-danger" name="reject" value="{{ request.id }}">Reject</button>
+                      {% endif %}  
+                   </td>
+      
+                  </tr>
+                {% endfor %}
+      
+              </tbody>
+
+          </table>  
+    
+          <div class="d-flex justify-content-center">
+            <nav aria-label="Transaction pagination">
+                <ul class="pagination ">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo; Previous</a>
+                        </li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if num == page_obj.number %}
+                            <li class="page-item active " aria-current="page">
+                                <span class="page-link ">{{ num }} <span class="sr-only">(current)</span></span>
+                            </li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item  ">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    
+          
+    
+    
+        </div>
+          {% endif %}
+        </div>
+
+        </form>
+          
+
+
+</div>
+
+
+{% endblock %}

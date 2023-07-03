@@ -1,0 +1,95 @@
+{% extends 'Admin/base.html' %}
+
+{% block content %}
+{% load static %}
+
+<div id="page-content-wrapper">
+
+    
+    <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4 ">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
+            <h2 class="fs-2 m-0">Create New Staff User</h2>
+
+         
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        {% include 'setting.html' %}
+
+    
+
+    </nav>
+
+<div class=" w-100">
+
+        <div class="m-auto w-50 ">
+    
+      <form method="post" class="shadow-sm rounded border p-4  createStaff">
+                {% csrf_token %}
+                {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field }}
+                {% endfor %}
+                <!-- <input type="hidden" name="csrfmiddlewaretoken" value="VFPavwM6hyRyOLOnjnS9W2kABgYNYIiT0msjFF1b7J3fJvySIMZIGMlYupZvVhRl"> -->
+         
+
+                {% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endfor %}
+    {% endfor %}
+{% endif %}
+                
+                <div class="mb-3 login_">
+                    <label for="id_username" class="form-label">Username</label>
+                    <input type="text" name="username" maxlength="10" required="" id="id_username">
+                </div>
+                
+                <div class="mb-3 login_">
+                    <label for="id_password" class="form-label">Password</label>
+                    <input type="text" name="password" maxlength="128" required="" id="id_password">
+        
+                    
+                </div>
+                
+                <div class="mb-3 login_">
+                    <label for="id_email" class="form-label">Email</label>
+                    <input type="email" name="email" maxlength="30" required="" id="id_email">
+        
+                    
+                </div>
+                
+                <div class="mb-3  status ">
+                <div class="mt-1">
+                    <label for="id_is_staff" class="form-label">Administrator </label>
+                </div>
+                <div>
+                    <input type="checkbox" name="is_staff" id="id_is_staff">
+                </div>
+                </div>
+                
+        
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg " style="background-color: #0EA2BD;">Create Staff</button>
+                </div>
+            </form>
+        
+            
+        
+        
+          
+        
+        
+        </div>
+
+</div>
+
+</div>
+
+{% endblock content %}

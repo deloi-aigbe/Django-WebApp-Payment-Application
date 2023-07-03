@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+
+ 
+      <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4 ">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
+                <h2 class="fs-2 m-0">Dashboard</h2>
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            {% include 'setting.html' %}
+
+         
+        </nav>
+
+
+
+  
+
+    <main class="maindashboard">
+
+
+      <div class="container">
+        <div class="card-deck">
+          <div class="card">
+            <div class="card-body text-center">
+              <h5 class="card-title">Current Balance</h5>
+              <p class="card-text">{{ balance }}</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body text-center">
+              <h5 class="card-title">Total Amount Sent</h5>
+              <p class="card-text">{{ total_sent }}</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body text-center">
+              <h5 class="card-title">Total Amount Received</h5>
+              <p class="card-text">{{ total_received }}</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body text-center">
+              <h5 class="card-title">Total Requested Received</h5>
+              <p class="card-text">{{ total_requests_received }}</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body text-center">
+              <h5 class="card-title">Total Requests Sent</h5>
+              <p class="card-text">{{ total_requests_sent }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+   
+        </main>
+    
+      </div>
+
+</body>
+
+</html>{% endblock content %}

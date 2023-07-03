@@ -1,0 +1,161 @@
+{% extends 'Admin/base.html' %}
+
+{% block content %}
+{% load static %}
+
+
+{% load humanize %}
+
+
+
+      <div id="page-content-wrapper">
+
+    
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4 ">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
+                <h2 class="fs-2 m-0">Transaction history</h2>
+
+             
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            {% include 'setting.html' %}
+
+        
+
+        </nav>
+
+
+
+    
+
+   
+
+    <main class="maindashboard">
+
+
+ 
+
+      <form method="get" id="filter">
+        <div class="d-flex justify-content-center mt-5">
+            <div class="input-group w-50">
+                <input type="search" name="daterange" id="search" placeholder="Filter using date range" class="form-control rounded-start" autocomplete="off" value="{{ request.GET.daterange}}" />
+                <button type="submit" class="btn btn-outline-secondary rounded-end">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.657 10.743a6.5 6.5 0 10-1.414 1.414l3.536 3.536a1 1 0 001.414-1.414l-3.536-3.536zM6.5 11a4.5 4.5 0 110-9 4.5 4.5 0 010 9z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        {% if form.daterange.errors %} {% for error in form.daterange.errors %}
+        <p class="text-danger text-sm italic">{{ error }}</p>
+        {% endfor %} {% endif %}
+    </form>
+
+
+
+<div  class="">
+
+    {% if object_list|length == 0 %}
+
+    {% include 'payments/NotFound.html' %}
+
+{% else %}
+    <div class="table-responsive mt-4">
+        <table class="table table-striped">
+            <thead class="bg-sideColor text-white">
+                <tr class="uppercase font-semibold text-sm">
+
+
+          
+                    <th class="px-4 py-2">Username</th>
+                    <th class="px-4 py-2">Email</th>
+                    <th class="px-4 py-2">Balance</th>
+                    <th class="px-4 py-2">Account </th>
+                    <th class="px-4 py-2">Name</th>
+                    <th class="px-4 py-2">Date Joined</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr class="{% cycle 'bg-gray-300' 'bg-white-100' %}">
+                     
+                        <td class="p-2">{{ user.username }}</td>
+                        <td class="p-2">{{ user.email }}</td>
+                        <td class="p-2">{{ user.default_currency }}  {{ user.balance }}</td> 
+                        <td class="p-2">{{ user.account_no }}</td> 
+                        <td class="p-2">{{ user.first_name }}  {{ user.last_name }}</td>
+                        <td class="p-2">{{ user.date_joined }}</td> 
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-center">
+            <nav aria-label="Transaction pagination">
+                <ul class="pagination ">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo; Previous</a>
+                        </li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if num == page_obj.number %}
+                            <li class="page-item active " aria-current="page">
+                                <span class="page-link ">{{ num }} <span class="sr-only">(current)</span></span>
+                            </li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item  ">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endif %}
+
+
+</div>
+
+</div>
+{% endblock %} {% block footer_extra %}
+<script type="text/javascript">
+    var def_date = '{{request.GET.daterange}}'
+    def_date = def_date == "" ? moment().format("Y-MM-DD") + " - " + moment().format("Y-MM-DD") : def_date
+    var date_split = def_date.split(" - ")
+    var start_date = moment(date_split[0]).format("MM/DD/Y")
+    var end_date = moment(date_split[1]).format("MM/DD/Y")
+    console.log(start_date, end_date)
+    $(function() {
+        $('input[name="daterange"]').daterangepicker({
+            autoUpdateInput: false,
+            startDate: start_date,
+            endDate: end_date,
+            locale: {
+                cancelLabel: "Clear",
+            },
+        });
+
+        $('input[name="daterange"]').on("apply.daterangepicker", function(ev, picker) {
+            $(this).val(picker.startDate.format("YYYY-MM-DD") + " - " + picker.endDate.format("YYYY-MM-DD"));
+            $('#filter').submit()
+        });
+
+        $('input[name="daterange"]').on("cancel.daterangepicker", function(ev, picker) {
+            $(this).val("");
+            $('#filter').submit()
+        });
+    });
+</script>
+{% endblock %}
